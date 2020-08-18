@@ -1,0 +1,24 @@
+.resume-text{
+    display: grid;
+    grid-template-columns: 60% 40%;
+    padding: 10%;
+    padding-top: 20px;
+    font-family: sans-serif;
+}
+
+.resume-left{
+    grid-column-start: 1;
+    padding: 5%;
+}
+
+.resume-right{
+    grid-column-start: 2;
+    padding: 5%;
+}
+
+.badge {
+    
+    float: left;
+    padding: 30px;
+    padding-right: 40px;
+}

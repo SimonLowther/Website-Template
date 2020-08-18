@@ -1,0 +1,47 @@
+.footer {
+    display: grid;
+    grid-template-columns: auto auto auto;
+
+    background-color: rgb(53, 53, 53);
+    background-size: cover;
+    color: lightgray;
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+}
+
+.footer_1 {
+    grid-column-start: 1;
+    text-align: left;
+    margin-left: 40px;
+    line-height: 1.6;
+}
+
+.footer_2 {
+    grid-column-start: 2;
+    text-align: left;
+    line-height: 1.6;
+}
+
+.footer_3 {
+    grid-column-start: 3;
+    text-align: left;
+    line-height: 1.6;
+}
+
+.footer_4 {
+    grid-column-start: 1;
+    grid-column-end: 4;
+}
+
+.footer ul li a{
+    text-decoration: none;
+    color: lightgray;
+    
+}

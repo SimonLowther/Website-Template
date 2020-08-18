@@ -1,0 +1,122 @@
+package simon.lowther;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class RosterScraper {
+
+    final String jetNetURL = "https://korunet.co.nz/crew";
+    private String userName;
+    private String password;
+    private boolean crew;
+    private boolean training;
+   
+    
+    // Load the settings.ini file
+    public void init() {
+
+	try (BufferedReader br = new BufferedReader(new FileReader("settings.ini"))) {
+	    
+	    String line;
+	    while((line = br.readLine()) != null) {
+		
+		if(line.startsWith(";")) continue;
+		String[] setting = line.split("=");
+		
+		switch(setting[0]){
+		case "username": userName=setting[1];
+		break;
+		case "password": password=setting[1];
+		break;
+		case "crew":	crew = Boolean.parseBoolean(setting[1]);
+		break;
+		case "training": training = Boolean.parseBoolean(setting[1]);
+		break;
+			
+		}
+	    }
+	    
+	
+
+	} catch (Exception ex) {
+	    ex.printStackTrace();
+	}
+    }
+
+    public static void main(String[] args) {
+
+	RosterScraper rs = new RosterScraper();
+	rs.init();
+	rs.GetRoster();
+
+    }
+
+    public void GetRoster() {
+
+	// Login to Korunet
+
+	System.setProperty("webdriver.gecko.driver", ".\\Drivers\\geckodriver.exe");
+	FirefoxProfile profile = new FirefoxProfile();
+	profile.setPreference("browser.download.manager.showWhenStarting", false);
+	profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "");
+	profile.setPreference("browser.helperApps.neverAsk.openFile", "");
+	FirefoxOptions options = new FirefoxOptions();
+	options.setProfile(profile);
+	WebDriver driver = new FirefoxDriver(options);
+	WebDriverWait wait = new WebDriverWait(driver, 10);
+	driver.get(jetNetURL);
+	WebElement token1 = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("IDToken1")));
+	WebElement token2 = driver.findElement(By.id("IDToken2"));
+	WebElement button = driver.findElement(By.className("btn-airnzlights-submit"));
+	token1.sendKeys(userName);
+	token2.sendKeys(password);
+	button.click();
+
+	// Select the ICalander and navigate to next calander with 'FD' and training
+	// selected if requried in settings file
+
+	WebElement iCal = wait.until(ExpectedConditions.presenceOfElementLocated(By.linkText("iCalendar")));
+	String home = driver.getCurrentUrl();
+	iCal.click();
+	
+	WebElement trainingBox = wait.until(ExpectedConditions.presenceOfElementLocated(By.name("trng")));
+	if (training==true && !trainingBox.isSelected())
+	    trainingBox.click();
+	if (training==false && trainingBox.isSelected())
+	    trainingBox.click();
+	
+	WebElement cof = driver.findElement(By.id("cof"));
+	Select cofSelect = new Select(cof);
+	if (crew==true)
+	cofSelect.selectByValue("FD");
+	
+	WebElement nxt = driver.findElement(By.id("next"));
+	nxt.click();
+	
+	//Download the roster ical file
+	WebElement download = wait.until(ExpectedConditions.presenceOfElementLocated(By.name("Outlook")));
+	download.click();
+	
+	//Navigate to and open PDF copy of roster
+	driver.navigate().to(home);
+	WebElement rosterPDF = wait.until(ExpectedConditions.presenceOfElementLocated(By.linkText("MyRoster")));
+	rosterPDF.click();
+	@SuppressWarnings("unused")
+	WebElement pause = wait.until(ExpectedConditions.presenceOfElementLocated(By.linkText("MyRoster")));
+	List <WebElement> tds = driver.findElements(By.tagName("td"));
+	WebElement roster = tds.get(tds.size()-1);
+	roster.click();
+    }
+
+}

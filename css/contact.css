@@ -1,0 +1,78 @@
+
+
+.contact-body-image{
+    background-image: url("/Resources/code.jpg");
+    width: 100%;
+    height: 100%;
+    background-position: center;
+}
+
+.contact-body {
+    display: grid;
+    margin: 15%;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    grid-template-columns: auto auto;
+    
+}
+
+.details{
+    grid-column: 1;
+    font-size: large;
+    font-family: sans-serif;
+    padding: 5px;
+    margin-top: 40px;
+}
+
+.contact-form {
+    grid-column: 2;
+}
+
+.contact-form [type=text]{
+    border-radius: 3px;
+    padding: 8px 20px;
+    opacity: 0.5;
+    
+}
+
+.contact-form [type=textarea]{
+    border-radius: 3px;
+    padding: 8px 20px;
+    opacity: 0.5;
+    
+}
+
+.contact-form form {
+    
+    display: flex;
+    flex-direction: column;
+    font-family: sans-serif;
+    font-size: large;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+.contact-form button{
+    border-radius: 3px;
+    padding: 12px;
+    background-color: rgba(0, 195, 255, 0.308);
+    font-size: large;
+    font-family: sans-serif;
+}
+
+.alert{
+    background-color: rgba(255, 62, 95, 0.918);
+    color: white;
+    padding: 10px;
+    opacity: .75;
+    
+}
+
+.success{
+    background-color: rgba(62, 255, 110, 0.918);
+    color: white;
+    padding: 10px;
+    opacity: .75;
+    
+}
+

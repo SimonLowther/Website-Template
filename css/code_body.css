@@ -1,0 +1,55 @@
+.code_body {
+    scroll-behavior: smooth;
+    display: grid;
+    grid-template-columns: 210px auto;
+    grid-template-rows: auto 70%;
+    margin-bottom: 10px;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+}
+
+.code_menu ul{
+    position: fixed;
+    grid-row-end: 1;
+    
+}
+
+.code_menu ul li {
+    text-decoration: none;
+    list-style-type: none;
+    color: lightgray;
+}
+
+.code_menu {
+    grid-column-start: 1;   
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    margin-bottom: 50px;
+    background-color: rgb(53, 53, 53);
+
+}
+
+.code_menu ul li a{
+    text-decoration: none;
+    color: lightgray;
+    
+}
+
+.code_display {
+    grid-column-start: 2;
+    padding-left: 7%;
+    padding-right: 20%;
+    padding-top: 40px;
+    overflow-x: hidden;
+    padding-right: 10%;    
+}
+
+pre {
+    background-color: rgba(255, 242, 170, 0.575);
+    padding: 10px;
+    overflow-x: hidden;
+    width: 80%;
+    height: 500px;
+}

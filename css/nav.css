@@ -1,0 +1,52 @@
+
+.nav_bar{
+    background-color: rgba(255, 255, 255, 0);
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+}
+
+.nav_bar ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    padding-right: 10%;
+    
+    
+}
+
+.nav_item{
+
+    list-style-type: none;
+    text-align: left;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    padding: 15px;
+    padding-right: 18px;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    float: inline-end;
+    margin: 4px;
+}
+
+a:link:visited{
+    color: (rgb(72, 153, 173));
+}
+
+.nav_item:link:visited{
+    color: (rgb(72, 153, 173));
+}
+
+.nav_item:hover{
+    
+    color: (rgb(72, 153, 173));
+    border: 1px white solid;
+    border-radius: 3px;
+    
+}
+
+
+.active_item{
+    background-color: rgba(255, 255, 255, 0.322);
+    border-radius: 3px;
+}

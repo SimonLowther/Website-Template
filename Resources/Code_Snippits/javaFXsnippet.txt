@@ -1,0 +1,922 @@
+
+package rasnz.membership;
+//
+import java.awt.Desktop;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+public class RASNZMembershipFXMLController implements Initializable {
+
+    int selectedMemberIndex = -1;
+    double version;
+    double[] paymentAmounts;
+
+    @FXML
+    ListView<Member> listView;
+
+    @FXML
+    Button addButton;
+
+    @FXML
+    Button deleteButton;
+
+    @FXML
+    Button editButton;
+
+    @FXML
+    Button prevButton;
+
+    @FXML
+    Button nextButton;
+
+    @FXML
+    Button findButton;
+
+    @FXML
+    Button subsButton;
+
+    @FXML
+    Button commitButton;
+
+    @FXML
+    Label numberLabel;
+
+    @FXML
+    Label nameLabel;
+
+    @FXML
+    Label address1Label;
+
+    @FXML
+    Label address2Label;
+
+    @FXML
+    Label address3Label;
+
+    @FXML
+    Label address4Label;
+
+    @FXML
+    Label subsPaidToLabel;
+
+    @FXML
+    Label phoneLabel;
+
+    @FXML
+    Label mobileLabel;
+
+    @FXML
+    Label emailLabel;
+
+    @FXML
+    Label occupationLabel;
+
+    @FXML
+    Label joinedLabel;
+
+    @FXML
+    Label notesLabel;
+
+    // @FXML
+    // ChoiceBox typeChoiceBox;
+
+    @FXML
+    CheckBox printedSSCheckBox;
+
+    @FXML
+    CheckBox councillorCheckBox;
+
+    @FXML
+    CheckBox yearbookCheckBox;
+
+    @FXML
+    TextField findTextField;
+
+    @FXML
+    MenuItem convertFileMenuItem;
+
+    @FXML
+    MenuItem closeFileMenuItem;
+
+    @FXML
+    MenuItem aboutHelpMenuItem;
+
+    @FXML
+    MenuItem commitChangesFileMenuItem;
+
+    @FXML
+    MenuItem backupFileMenuItem;
+
+    @FXML
+    MenuItem restoreFileMenuItem;
+
+    @FXML
+    MenuItem exMembersListFileMenuItem;
+
+    @FXML
+    MenuItem membersListReportsMenuItem;
+
+    @FXML
+    MenuItem affSocListReportsMenuItem;
+
+    @FXML
+    MenuItem subsOwingListReportsMenuItem;
+
+    @FXML
+    MenuItem journalLabelsReportsMenuItem;
+
+    @FXML
+    MenuItem allLabelsReportsMenuItem;
+
+    @FXML
+    MenuItem yearbooksReportMenuItem;
+
+    @FXML
+    MenuItem setSubsReportsMenuItem;
+
+    @FXML
+    MenuItem renewalNoticesReportsMenuItem;
+
+    @FXML
+    MenuItem resetYearbooksReportsMenuItem;
+
+    @FXML
+    MenuItem resetPrintedSSReportsMenuItem;
+
+    @FXML
+    MenuItem addMemberChecklistHelpMenuItem;
+
+    @FXML
+    MenuItem removeMemberChecklistHelpMenuItem;
+
+    @FXML
+    MenuItem helpHelpMenuItem;
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+
+        // Collections.sort(RASNZMembership.membersArrayList);
+        listView.getItems().setAll(RASNZMembership.membersArrayList);
+        listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Member>() {
+            @Override
+            public void changed(ObservableValue<? extends Member> observable, Member oldValue, Member newValue) {
+                // throw new UnsupportedOperationException("Not supported yet.");
+                if (newValue != null) {
+                    displayMember(newValue);
+                }
+            }
+
+        });
+
+    }
+
+    @FXML
+    public void handleButtonClicked(ActionEvent e) throws URISyntaxException, ParserConfigurationException {
+
+        if (e.getSource().equals(addButton)) {
+            addButtonPressed();
+
+        } else if (e.getSource().equals(deleteButton)) {
+            deleteButtonPressed();
+
+        } else if (e.getSource().equals(editButton)) {
+            editButtonPressed();
+
+        } else if (e.getSource().equals(prevButton)) {
+            listView.getSelectionModel().selectPrevious();
+
+        } else if (e.getSource().equals(nextButton)) {
+            listView.getSelectionModel().selectNext();
+
+        } else if (e.getSource().equals(findButton)) {
+            findMember();
+
+        } else if (e.getSource().equals(subsButton)) {
+            subsButtonPressed();
+
+        } else if (e.getSource().equals(commitButton)) {
+            commitChanges();
+        }
+    }
+
+    @FXML
+    private void handleMenuItemSelected(ActionEvent e) {
+
+        if (e.getSource().equals(convertFileMenuItem)) {
+            XMLDataHandler.convert();
+
+        } else if (e.getSource().equals(closeFileMenuItem)) {
+            Platform.exit();
+
+        } else if (e.getSource().equals(backupFileMenuItem)) {
+            backup();
+
+        } else if (e.getSource().equals(restoreFileMenuItem)) {
+            restore();
+
+        } else if (e.getSource().equals(aboutHelpMenuItem)) {
+            about();
+
+        } else if (e.getSource().equals(commitChangesFileMenuItem)) {
+            commitChanges();
+
+        } else if (e.getSource().equals(membersListReportsMenuItem)) {
+            memberReport();
+
+        } else if (e.getSource().equals(exMembersListFileMenuItem)) {
+            exMemberListOpen();
+
+        } else if (e.getSource().equals(affSocListReportsMenuItem)) {
+            affSocReport();
+
+        } else if (e.getSource().equals(subsOwingListReportsMenuItem)) {
+            subsOwingReport();
+
+        } else if (e.getSource().equals(journalLabelsReportsMenuItem)) {
+            journalLabelsReport();
+
+        } else if (e.getSource().equals(allLabelsReportsMenuItem)) {
+            allAddressesReport();
+
+        } else if (e.getSource().equals(yearbooksReportMenuItem)) {
+            yearbookReport();
+
+        } else if (e.getSource().equals((setSubsReportsMenuItem))) {
+            setSubs();
+
+        } else if (e.getSource().equals(renewalNoticesReportsMenuItem)) {
+            renewalNotices(paymentAmounts);
+
+        } else if (e.getSource().equals(resetYearbooksReportsMenuItem)) {
+            resetYearbooks();
+
+        } else if (e.getSource().equals(resetPrintedSSReportsMenuItem)) {
+            resetSouthernStars();
+
+        } else if (e.getSource().equals(addMemberChecklistHelpMenuItem)) {
+            newMemberChecklist();
+
+        } else if (e.getSource().equals(removeMemberChecklistHelpMenuItem)) {
+            removeMemberChecklist();
+
+        } else if (e.getSource().equals(helpHelpMenuItem)) {
+            openHelp();
+        }
+
+    }
+
+    @FXML
+    private void handleCheckBoxChanged(ActionEvent e) throws URISyntaxException, ParserConfigurationException {
+        if (e.getSource().equals(printedSSCheckBox)) {
+            if (printedSSCheckBox.isSelected()) {
+                Member member = RASNZMembership.membersArrayList.get(selectedMemberIndex);
+                member.southernStars = true;
+                commitButton.setStyle("-fx-base: #b6e7c9");
+            } else {
+                Member member = RASNZMembership.membersArrayList.get(selectedMemberIndex);
+                member.southernStars = false;
+                commitButton.setStyle("-fx-base: #b6e7c9");
+            }
+        } else if (e.getSource().equals(yearbookCheckBox)) {
+            if (yearbookCheckBox.isSelected()) {
+                Member member = RASNZMembership.membersArrayList.get(selectedMemberIndex);
+                member.yearbook = true;
+                commitButton.setStyle("-fx-base: #b6e7c9");
+            } else {
+                Member member = RASNZMembership.membersArrayList.get(selectedMemberIndex);
+                member.yearbook = false;
+                commitButton.setStyle("-fx-base: #b6e7c9");
+            }
+        } else if (e.getSource().equals(councillorCheckBox)) {
+            if (councillorCheckBox.isSelected()) {
+                Member member = RASNZMembership.membersArrayList.get(selectedMemberIndex);
+                member.councillor = true;
+                commitButton.setStyle("-fx-base: #b6e7c9");
+            } else {
+                Member member = RASNZMembership.membersArrayList.get(selectedMemberIndex);
+                member.councillor = false;
+                commitButton.setStyle("-fx-base: #b6e7c9");
+            }
+        }
+    }
+
+    @FXML
+    public void onListViewClicked() {
+        // No longer required with listner added to listView, see initialize method
+        // Member selectedMember =
+        // (Member)listView.getSelectionModel().getSelectedItem();
+        // displayMember(selectedMember);
+    }
+
+    public void displayMember(Member selectedMember) {
+        selectedMemberIndex = RASNZMembership.membersArrayList.indexOf(selectedMember);
+        numberLabel.setText(Integer.toString(selectedMember.memNumber));
+        nameLabel.setText(selectedMember.firstname + " " + selectedMember.surname);
+        address1Label.setText(selectedMember.address1);
+        address2Label.setText(selectedMember.address2);
+        address3Label.setText(selectedMember.address3);
+        address4Label.setText(selectedMember.address4);
+        subsPaidToLabel.setText(Integer.toString(selectedMember.subPaidTo));
+        phoneLabel.setText(selectedMember.phone);
+        mobileLabel.setText(selectedMember.mobile);
+        emailLabel.setText(selectedMember.email);
+        occupationLabel.setText(selectedMember.Occupation);
+        joinedLabel.setText(Integer.toString(selectedMember.joined));
+        notesLabel.setText(selectedMember.notes);
+        printedSSCheckBox.setSelected(selectedMember.southernStars);
+        councillorCheckBox.setSelected(selectedMember.councillor);
+        yearbookCheckBox.setSelected(selectedMember.yearbook);
+        // typeChoiceBox.getSelectionModel().select(selectedMember.type);
+    }
+
+    @FXML
+    private void handleFindTextFieldKeyPressed(KeyEvent e) {
+        if (e.getCode() == KeyCode.ENTER) {
+            findMember();
+        }
+    }
+
+    private void findMember() {
+        String inputText = findTextField.getText();
+        int memberReturn = 1;
+        if (isNumeric(inputText)) {
+            for (Member member : RASNZMembership.membersArrayList) {
+                if (member.memNumber == Integer.parseInt(inputText)) {
+                    memberReturn = member.memNumber;
+                }
+            }
+
+        } else/* (is not numeric) */ {
+            for (Member member : RASNZMembership.membersArrayList) {
+                {
+                    if (member.surname.equalsIgnoreCase(inputText)) {
+                        memberReturn = member.memNumber;
+                    }
+                }
+            }
+        }
+        for (Member member : RASNZMembership.membersArrayList) {
+            if (member.memNumber == memberReturn) {
+                displayMember(member);
+                listView.getSelectionModel().select(member);
+
+                break;
+            }
+        }
+    }
+
+    public boolean isNumeric(String string) {
+        try {
+            Double.parseDouble(string);
+        } catch (NumberFormatException e) {
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    private void about() {
+        try {
+            Alert aboutAlert = new Alert(Alert.AlertType.INFORMATION);
+            aboutAlert.setHeaderText("RASNZ Member Database v" + RASNZMembership.getVersion());
+            Image logoImage;
+            logoImage = new Image(new FileInputStream("resources\\rasnzMed.jpg"));
+
+            ImageView imageView = new ImageView(logoImage);
+            // imageView.resize(50, 50);
+            aboutAlert.setGraphic(imageView);
+            aboutAlert.setTitle("About");
+            aboutAlert.setContentText("Author: Simon Lowther \nEmail:simon@jlobservatory.com"
+                    + "\n\nThis data base contains privilaged \ninformation intended for the RASNZ council only");
+            aboutAlert.initModality(Modality.APPLICATION_MODAL);
+            aboutAlert.showAndWait();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(RASNZMembershipFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    private void commitChanges() {
+        commitButton.setStyle("");
+        XMLDataHandler.commitChanges();
+    }
+
+    private void addButtonPressed() {
+        AddMember.display(0);
+        listView.getItems().setAll(RASNZMembership.membersArrayList);
+        listView.getSelectionModel().selectLast();
+    }
+
+    private void deleteButtonPressed() {
+        int index = -1;
+        for (Member member : RASNZMembership.membersArrayList) {
+            if (member.memNumber == Integer.parseInt(numberLabel.getText())) {
+                index = RASNZMembership.membersArrayList.indexOf(member);
+            }
+        }
+        System.out.println(index);
+        XMLDataHandler.deleteMember(index);
+        listView.getItems().setAll(RASNZMembership.membersArrayList);
+        listView.getSelectionModel().selectFirst();
+    }
+
+    private void editButtonPressed() {
+        AddMember.display(Integer.parseInt(numberLabel.getText()));
+        listView.getItems().setAll(RASNZMembership.membersArrayList);
+        // displayMember(Integer.parseInt(numberLabel.getText()));
+
+    }
+
+    private void subsButtonPressed() {
+        // int year = Year.now().getValue();
+        for (Member member : RASNZMembership.membersArrayList) {
+            if (member.memNumber == Integer.parseInt(numberLabel.getText())) {
+                member.subPaidTo = member.subPaidTo + 1;
+                subsPaidToLabel.setText(Integer.toString(member.subPaidTo));
+                break;
+            }
+        }
+        // Member member = RASNZMembership.membersArrayList.get(selectedMemberIndex);
+        // member.subPaidTo = year;
+        commitButton.setStyle("-fx-base: #b6e7c9");
+    }
+
+    private void backup() {
+        try {
+            String saveFile = saveReportPath("MembersBackup.xml");
+            File file = new File(saveFile);
+            XMLDataHandler.saveMemberList(file);
+
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(RASNZMembershipFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TransformerException ex) {
+            Logger.getLogger(RASNZMembershipFXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    private void restore() {
+        Alert confirmaationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmaationAlert.setHeaderText("Are You Sure?");
+        confirmaationAlert.setTitle("WARNING!");
+        confirmaationAlert
+                .setContentText("This is irriversable, make a backup prior to proceeding \n Press CANCEL to exit.");
+        Optional result = confirmaationAlert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            FileChooser fileChooser = new FileChooser();
+            File file = new File(fileChooser.showOpenDialog(RASNZMembership.stage).getPath());
+            if (!(file == null)) {
+                RASNZMembership.membersArrayList.clear();
+                XMLDataHandler.readData(file);
+                XMLDataHandler.clean();
+                XMLDataHandler.commitChanges();
+                Alert doneAlert = new Alert(Alert.AlertType.INFORMATION);
+                doneAlert.setContentText("New File Loaded");
+                doneAlert.showAndWait();
+                XMLDataHandler.load();
+            }
+
+        }
+
+    }
+
+    private void exMemberListOpen() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Ex-Member List");
+        alert.setHeaderText("This Function Coming");
+        alert.setContentText("Please contact the developer at \n simon@jlobservatory.com");
+        alert.showAndWait();
+
+    }
+
+    private void resetYearbooks() {
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setContentText("Reset yearbooks for new year?");
+        Optional result = confirmationAlert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            for (Member member : RASNZMembership.membersArrayList) {
+                member.yearbook = false;
+                commitChanges();
+            }
+        }
+
+    }
+
+    private void resetSouthernStars() {
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setContentText("Reset Southern Stars for new year?");
+        Optional result = confirmationAlert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            for (Member member : RASNZMembership.membersArrayList) {
+                member.southernStars = false;
+                commitChanges();
+            }
+        }
+    }
+
+    private void openHelp() {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                File helpFile = new XMLFileClass().helpFile;
+                Desktop.getDesktop().browse(helpFile.toURI());
+            } catch (IOException ex) {
+
+            }
+        }
+    }
+
+    private void newMemberChecklist() {
+        Alert newMemberAlert = new Alert(Alert.AlertType.INFORMATION);
+        newMemberAlert.setTitle("New Member Checklist");
+        newMemberAlert.setHeaderText("Complete these items to add a new member to RASNZ");
+        newMemberAlert.setContentText("1) Add to membership list \n 2) Add to membership book \n "
+                + "3) Add to MailChimp \n 4) Add to RASNZ website");
+        newMemberAlert.showAndWait();
+    }
+
+    private void removeMemberChecklist() {
+        Alert newMemberAlert = new Alert(Alert.AlertType.INFORMATION);
+        newMemberAlert.setTitle("Remove Member Checklist");
+        newMemberAlert.setHeaderText("Complete these items to add a new member to RASNZ");
+        newMemberAlert.setContentText("1) Remove from membership list \n 2) nil \n "
+                + "3) Change MailChimp mail list \n 4) Remove from RASNZ website");
+        newMemberAlert.showAndWait();
+    }
+
+    // ******* REPORTS *********
+
+    // All reports are created in the following section, reports are choosen from
+    // the Report Menu
+
+    private void memberReport() {
+        try {
+            String file = saveReportPath("MembershipList.txt");
+            FileWriter filewriter = new FileWriter(file);
+            BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
+            String header = "RASNZ Membership Report";
+            DateFormat dateformat = DateFormat.getDateInstance(DateFormat.FULL);
+            String subHeader = "Created: " + dateformat.format(new Date());
+            bufferedWriter.write(header);
+            bufferedWriter.newLine();
+            bufferedWriter.write(subHeader);
+            bufferedWriter.newLine();
+            bufferedWriter.write("-------------------------------------");
+            bufferedWriter.newLine();
+            bufferedWriter.newLine();
+
+            // Itereate through the members list
+            for (Member member : RASNZMembership.membersArrayList) {
+                @SuppressWarnings("unused")
+                Member nextMember = member;
+
+                // Check data for members, write member data to string ->file
+                if (nextMember.type.equals("M") || nextMember.type.equals("S") || nextMember.type.equals("L")
+                        || nextMember.type.equals("H") || nextMember.type.equals("C")) {
+                    String dataLine1 = nextMember.memNumber + ": " + nextMember.surname + ", " + nextMember.firstname;
+                    String dataLine2 = "\t" + nextMember.address1 + "," + nextMember.address2 + ","
+                            + nextMember.address3 + "," + nextMember.address4 + "; " + nextMember.email;
+                    bufferedWriter.write(dataLine1);
+                    bufferedWriter.newLine();
+                    bufferedWriter.write(dataLine2);
+                    bufferedWriter.newLine();
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                }
+
+            }
+            bufferedWriter.flush();
+            bufferedWriter.close();
+            Desktop.getDesktop().edit(new File(file));
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+    }
+
+    private void affSocReport() {
+        try {
+            String file = saveReportPath("affSocList.txt");
+            FileWriter filewriter = new FileWriter(file);
+            BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
+            String header = "RASNZ Affilaited Society Report";
+            DateFormat dateformat = DateFormat.getDateInstance(DateFormat.FULL);
+            String subHeader = "Created: " + dateformat.format(new Date());
+            bufferedWriter.write(header);
+            bufferedWriter.newLine();
+            bufferedWriter.write(subHeader);
+            bufferedWriter.newLine();
+            bufferedWriter.write("-------------------------------------");
+            bufferedWriter.newLine();
+            bufferedWriter.newLine();
+
+            // Itereate through the members list
+            for (Member member : RASNZMembership.membersArrayList) {
+                Member nextMember = member;
+
+                // Check data for members, write member data to string ->file
+                if (nextMember.type.equals("Soc")) {
+                    String dataLine1 = nextMember.memNumber + ": " + nextMember.firstname;
+                    String dataLine2 = "\t" + nextMember.address1 + "," + nextMember.address2 + ","
+                            + nextMember.address3 + "," + nextMember.address4 + "; " + nextMember.email;
+                    bufferedWriter.write(dataLine1);
+                    bufferedWriter.newLine();
+                    bufferedWriter.write(dataLine2);
+                    bufferedWriter.newLine();
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                }
+            }
+            bufferedWriter.flush();
+            bufferedWriter.close();
+            Desktop.getDesktop().edit(new File(file));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void subsOwingReport() {
+        try {
+            String file = saveReportPath("SubsOwingList.txt");
+            FileWriter filewriter = new FileWriter(file);
+            BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
+            String header = "RASNZ Subs Owing Report";
+            DateFormat dateformat = DateFormat.getDateInstance(DateFormat.FULL);
+            String subHeader = "Created: " + dateformat.format(new Date());
+            bufferedWriter.write(header);
+            bufferedWriter.newLine();
+            bufferedWriter.write(subHeader);
+            bufferedWriter.newLine();
+            bufferedWriter.write("-------------------------------------");
+            bufferedWriter.newLine();
+            bufferedWriter.newLine();
+
+            // Itereate through the members list
+            for (Member member : RASNZMembership.membersArrayList) {
+                Member nextMember = member;
+
+                // Find members whom owe subs and add to report
+                if (nextMember.subPaidTo < (Calendar.getInstance().get(Calendar.YEAR))) {
+                    String data1 = nextMember.firstname + " " + nextMember.surname;
+                    bufferedWriter.write(data1);
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                }
+
+            }
+
+            bufferedWriter.flush();
+            bufferedWriter.close();
+            Desktop.getDesktop().edit(new File(file));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
+    }
+
+    private static void journalLabelsReport() {
+        try {
+            String file = saveReportPath("SSRecipientsList.txt");
+            FileWriter filewriter = new FileWriter(file);
+            if (file != null) {
+                BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
+                String header = "RASNZ Southern Stars List Report";
+                DateFormat dateformat = DateFormat.getDateInstance(DateFormat.FULL);
+                // String subHeader = "Created: " + dateformat.format(new Date());
+                // bufferedWriter.write(header);
+                // bufferedWriter.newLine();
+                String subHeader = "Name,Address 1,Address 2,Address 3,Address 4";
+                bufferedWriter.write(subHeader);
+                // bufferedWriter.newLine();
+                // bufferedWriter.write("-------------------------------------");
+                // bufferedWriter.newLine();
+                bufferedWriter.newLine();
+
+                // Itereate through the members list
+                for (Member member : RASNZMembership.membersArrayList) {
+                    Member nextMember = member;
+
+                    // Find members whom owe subs and add to report
+                    if (nextMember.southernStars == true) {
+                        String data1 = nextMember.firstname + " " + nextMember.surname + "," + nextMember.address1 + ","
+                                + nextMember.address2 + "," + nextMember.address3 + "," + nextMember.address4;
+                        bufferedWriter.write(data1);
+                        bufferedWriter.newLine();
+                        bufferedWriter.flush();
+                    }
+
+                }
+
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                Desktop.getDesktop().edit(new File(file));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
+    }
+
+    private static void yearbookReport() {
+
+        try {
+            String file = saveReportPath("YearbookRecipients.txt");
+            if (file != null) {
+                FileWriter filewriter = new FileWriter(file);
+                BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
+                String header = "Yearbook Recipients";
+                DateFormat dateformat = DateFormat.getDateInstance(DateFormat.FULL);
+                String subHeader = "Created: " + dateformat.format(new Date());
+                bufferedWriter.write(header);
+                bufferedWriter.newLine();
+
+                for (Member member : RASNZMembership.membersArrayList) {
+                    if (member.yearbook) {
+                        String nextLine = member.memNumber + " " + member.firstname + " " + member.surname;
+                        bufferedWriter.write(nextLine);
+                        bufferedWriter.newLine();
+                        bufferedWriter.newLine();
+                        bufferedWriter.flush();
+                    }
+
+                }
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                Desktop.getDesktop().edit(new File(file));
+            }
+
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    private static void allAddressesReport() {
+        try {
+            String file = saveReportPath("All Listed Addresses.txt");
+            if (file != null) {
+                FileWriter filewriter = new FileWriter(file);
+                BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
+                String header = "RASNZ Affilaited Society Report";
+                DateFormat dateformat = DateFormat.getDateInstance(DateFormat.FULL);
+                String subHeader = "Created: " + dateformat.format(new Date());
+                bufferedWriter.write(header);
+                bufferedWriter.newLine();
+                bufferedWriter.write(subHeader);
+                bufferedWriter.newLine();
+                bufferedWriter.write("-------------------------------------");
+                bufferedWriter.newLine();
+                bufferedWriter.newLine();
+
+                // Itereate through the members list
+                for (Member member : RASNZMembership.membersArrayList) {
+                    Member nextMember = member;
+
+                    // Check data for members, write member data to string ->file
+                    if (!nextMember.type.equals("SS")) {
+                        String dataLine1 = nextMember.memNumber + ": " + nextMember.firstname;
+                        String dataLine2 = "\t" + nextMember.address1 + "," + nextMember.address2 + ","
+                                + nextMember.address3 + "," + nextMember.address4 + "; " + nextMember.email;
+                        bufferedWriter.write(dataLine1);
+                        bufferedWriter.newLine();
+                        bufferedWriter.write(dataLine2);
+                        bufferedWriter.newLine();
+                        bufferedWriter.newLine();
+                        bufferedWriter.flush();
+                    }
+                }
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                Desktop.getDesktop().edit(new File(file));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void setSubs() {
+        paymentAmounts = SubsAndPayments.display();
+
+    }
+
+    private static void renewalNotices(double[] paymentAmounts) {
+        if (paymentAmounts == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Warning");
+            alert.setContentText("You must run 'Set Subs' prior to creating the CSV");
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.showAndWait();
+
+        } else {
+
+            try {
+                String file = saveReportPath("Renewal Notices.txt");
+                if (file != null) {
+                    FileWriter filewriter = new FileWriter(file);
+                    BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
+                    String header = "Renewal Notices";
+                    DateFormat dateformat = DateFormat.getDateInstance(DateFormat.FULL);
+                    String subHeader = "Created: " + dateformat.format(new Date());
+                    bufferedWriter.write(header);
+                    bufferedWriter.newLine();
+                    bufferedWriter.write(subHeader);
+                    bufferedWriter.newLine();
+                    bufferedWriter.write("-------------------------------------");
+                    bufferedWriter.newLine();
+                    bufferedWriter.write(
+                            "MemNumber, First Name, Surname, Address1, Address2, Address3, Address4, Phone, Mobile, Email, Sub, Printed Journal, yearbook");
+                    bufferedWriter.newLine();
+                    bufferedWriter.write("-------------------------------------");
+                    bufferedWriter.newLine();
+                    bufferedWriter.newLine();
+
+                    // Itereate through the members list
+                    for (Member member : RASNZMembership.membersArrayList) {
+                        Member nextMember = member;
+
+                        double amount;
+                        if (nextMember.type.equalsIgnoreCase("M")) {
+                            amount = paymentAmounts[0];
+                        } else if (nextMember.type.equalsIgnoreCase("S")) {
+                            amount = paymentAmounts[1];
+                        } else if (nextMember.type.equalsIgnoreCase("H")) {
+                            amount = paymentAmounts[2];
+                        } else if (nextMember.type.equalsIgnoreCase("L")) {
+                            amount = paymentAmounts[3];
+                        } else if (nextMember.type.equalsIgnoreCase("Soc")) {
+                            amount = 0;
+                        } else if (nextMember.type.equalsIgnoreCase("SS")) {
+                            amount = paymentAmounts[6];
+                        } else {
+                            amount = 0;
+                        }
+
+                        // String modifiedAddress = nextMember.address.replace("\n", ",");
+                        String dataLine1 = nextMember.memNumber + "," + nextMember.firstname + "," + nextMember.surname
+                                + "," + nextMember.address1 + "," + nextMember.address2 + "," + nextMember.address3
+                                + "," + nextMember.address4 + "," + nextMember.phone + "," + nextMember.mobile + ","
+                                + nextMember.email + "," + amount + "," + paymentAmounts[4] + "," + paymentAmounts[5];
+                        bufferedWriter.write(dataLine1);
+                        bufferedWriter.newLine();
+                        bufferedWriter.flush();
+                    }
+                    bufferedWriter.flush();
+                    bufferedWriter.close();
+                    Desktop.getDesktop().edit(new File(file));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static String saveReportPath(String type) {
+        String path;
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName(type);
+        // fileChooser.setSelectedExtensionFilter("txt");
+        path = fileChooser.showSaveDialog(RASNZMembership.stage).toString();
+        return path;
+    }
+
+}
