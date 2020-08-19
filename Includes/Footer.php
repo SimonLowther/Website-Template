@@ -1,6 +1,8 @@
 <!-- Instructions:
 
-Add your own links and contact details for the footer where indicated below --> 
+Add your own links and contact details for the footer where indicated below 
+If you have changed the navbar names for the pages, change them here also--> 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,9 +16,9 @@ Add your own links and contact details for the footer where indicated below -->
     <div class='footer_1'>
         <h3>Navigation</h3>
         <ul>
-        <li>Resume</li>
-        <li>Code Examples</li>
-        <li>Contact</li>
+        <li><a href="Resume.php">Resume</a></li>
+        <li><a href="Code.php">Code Examples</a></li>
+        <li><a href="Contact.php">Contact</a></li>
     </ul>
     </div>
     <div class='footer_2'>
