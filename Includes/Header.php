@@ -1,3 +1,11 @@
+<!-- Instructions: 
+
+Put the site title in the HTML below
+
+Alter the headings in the Nav bar below.  If you wish to keep it real simple only
+alter the HTML text between the tags, or for total completeness you can change the $item# fields but this will
+require changing other pages.  Feel free to email me to find out all the changes required if needed.  -->
+
 <head>
     <link rel="stylesheet" href="/css/header.css" />
     <link rel="stylesheet" href="/css/nav.css">
@@ -34,8 +42,7 @@
 
         <div class="text">
             <h2>
-                Simon Lowther
-                Portfolio
+                Write you site title here  <!--Site title goes here --> 
             </h2>
         </div>
     </div>

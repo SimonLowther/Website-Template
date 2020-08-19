@@ -1,3 +1,11 @@
+<!--
+Items to be done on this page
+1. Add email address to the $toEmail field
+2. Add your website name and URL into the $subject and $body fields where indicated below
+3. Put your contact details into the HTML where indicated below
+
+    -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,9 +33,9 @@ if (isset($_POST['submit'])) {
             $headers = 'MIME-Version: 1.0'.'\r\n'.'Content-Type:text/html;charset=UTF-8'."\r\n";
             $headers .='From: '.$name.'<'.$mail.'>'."\r\n";
 
-            $toEmail = 'admin@server1.flexihubs.com';
-            $subject = 'You Have a New Message from SimonLowther.co.nz';
-            $body = "You have a new message from SimonLowther.co.nz.  \n\n FROM: ".$name."\n EMAIL: ".$mail."\n\n".$message;
+            $toEmail = '';  //Add email address where contact emails are to be sent
+            $subject = 'You Have a New Message from addWebsiteNameHere';  //Add the website name here for enail formatting
+            $body = "You have a new message from addWebsiteURLhere  \n\n FROM: ".$name."\n EMAIL: ".$mail."\n\n".$message; //add the website URL for correct email formatting
             
             if(mail($toEmail, $subject, $body, $headers)){
                 //Email sent successfully
@@ -59,13 +67,10 @@ if (isset($_POST['submit'])) {
         <div class='contact-body'>
             <div class="details">
                 <h3>Contact Details</h3>
-                <div>Phone: 021794443<br><br>
-                    Email: simon@jlobservatory.com <br><br></div>
+                <div>Phone: <br><br> <!-- Add your name and phone number and email here --> 
+                    Email:  <br><br></div>
             </div><br><br>
-            <div>
-                <a href="https://GitHub.com/SimonLowther"><img src="/Resources/GitHub-Mark-32px.png">GitHub Page</img></a>
-            </div>
-
+            
             <div class="contact-form">
 
                 <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">

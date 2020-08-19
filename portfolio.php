@@ -1,12 +1,15 @@
+<!-- Instructions
+
+Add a site title where indicated and change the favicon to whatever you like -->
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simon Lowther</title>
-    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
-    <link rel='stylesheet' href='/css/portfolio.css'>
+    <title>Site Title</title> <!--Put the site title in here -->
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon"> <!-- Remember to change the favicon -->
 </head>
 
 <body>
