@@ -14,6 +14,7 @@ Items to be done on this page
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact</title>
     <link rel="stylesheet" href="css/contact.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <?php
@@ -22,10 +23,11 @@ if (isset($_POST['submit'])) {
     $name = htmlentities($_POST['name']);
     $mail = htmlentities($_POST['email']);
     $message = htmlentities($_POST['message']);
+    $honey = htmlentities($_POST['firstname']);
 
     //Test for empty fields and real email
 
-    if (!empty($name) && !empty($mail) && !empty($message)) {
+    if (!empty($name) && !empty($mail) && !empty($message) && empty($honey)) {
 
         if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
 
@@ -77,6 +79,7 @@ if (isset($_POST['submit'])) {
                     <?php if($resultMessage !=''): ?>
                         <div class='<?php echo $resultMessageClass?>'><?php echo $resultMessage; ?></div>
                     <?php endif ?>
+                    <div class="sweet"><label for="firstname">FirstName: </label> <input type="text" name="firstname" value="<?php echo isset($_POST['firstname']) ? $honey : '' ?>"></input></div>
                     <label for="name">Name: </label><input type="text" name="name" value="<?php echo isset($_POST['name']) ? $name : '' ?>"></input>
                     <label for="email">Email: </label><input type="text" name="email" value="<?php echo isset($_POST['email']) ? $mail : '' ?>"></input>
                     <label for="text">Message: </label><textarea type="textarea" name="message" rows="10" columns="150"></textarea>
@@ -86,3 +89,6 @@ if (isset($_POST['submit'])) {
         </div>
     </div>
 </body>
+<footer>
+    <script>$(document).ready(function(){$(".sweet").hide();})</script>
+</footer>
